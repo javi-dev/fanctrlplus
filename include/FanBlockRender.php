@@ -20,6 +20,9 @@ function render_fan_block($cfg, $i, $pwms, $disks, $pwm_labels, $cpu_sensors) {
   // 温度 fallback（防止空值出现 UI 上显示为 0°C）
   $low = isset($cfg['low']) && is_numeric($cfg['low']) ? intval($cfg['low']) : 40;
   $high = isset($cfg['high']) && is_numeric($cfg['high']) ? intval($cfg['high']) : 60;
+  $mid_temp = isset($cfg['mid_temp']) && is_numeric($cfg['mid_temp']) ? intval($cfg['mid_temp']) : 43;
+  $mid_pwm = isset($cfg['mid_pwm']) && is_numeric($cfg['mid_pwm']) ? intval($cfg['mid_pwm']) : 100;
+  $mid_pwm_pct = round($mid_pwm * 100 / 255) . '%';
 
   $idle_abs = isset($cfg['idle']) && is_numeric($cfg['idle']) ? (int)$cfg['idle'] : 0;
   $idle_pct = round($idle_abs * 100 / 255) . '%';
@@ -143,6 +146,16 @@ function render_fan_block($cfg, $i, $pwms, $disks, $pwm_labels, $cpu_sensors) {
               <!-- 中间波浪号 -->
               <span class="fcp-center">~</span>
 
+              <!-- 中间 Mid PWM -->
+              <input type="text"
+                    id="mid_pwm_percent_input_<?=$i?>"
+                    name="mid_pwm_percent[<?=$i?>]"
+                    inputmode="numeric"
+                    class="fcp-input-fullleft"
+                    value="<?=$mid_pwm_pct?>"
+                    title="Mid speed: <?=$mid_pwm_pct?> = <?=htmlspecialchars($mid_pwm)?> PWM"
+                    placeholder="Mid %">
+
               <!-- 右侧 Max -->
               <input type="text"
                     id="max_percent_input_<?=$i?>"
@@ -231,6 +244,19 @@ function render_fan_block($cfg, $i, $pwms, $disks, $pwm_labels, $cpu_sensors) {
                     value="<?=$low?>°C"
                     title="Low Temp: <?=intval($cfg['low'] ?? 40)?>°C"
                     placeholder="Low °C">
+
+              <!-- 中间波浪号 -->
+              <span class="fcp-center">~</span>
+
+              <!-- 中间 Mid Temp -->
+              <input type="text"
+                    id="mid_temp_input_<?=$i?>"
+                    name="mid_temp[<?=$i?>]"
+                    class="mid-temp-input fcp-input-fullleft"
+                    inputmode="numeric"
+                    value="<?=$mid_temp?>°C"
+                    title="Mid Temp: <?=intval($cfg['mid_temp'] ?? 43)?>°C"
+                    placeholder="Mid °C">
 
               <!-- 中间波浪号 -->
               <span class="fcp-center">~</span>
