@@ -206,7 +206,7 @@ function render_fan_block($cfg, $i, $pwms, $disks, $pwm_labels, $cpu_sensors) {
                   <?php foreach ($entries as $disk):
                     $sel = in_array($disk['id'], $selected) ? 'selected' : '';
                   ?>
-                    <option value="<?=$disk['id']?>" <?=$sel?> title="<?=$disk['id']&#10;<?=$disk['dev']?>"><?=htmlspecialchars($disk['label'])?></option>
+                    <option value="<?=$disk['id']?>" <?=$sel?> title="<?=$disk['id']?>&#10;<?=$disk['dev']?>"><?=htmlspecialchars($disk['label'])?></option>
                   <?php endforeach; ?>
                 </optgroup>
               <?php endforeach; ?>
