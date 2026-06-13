@@ -1,5 +1,166 @@
-/* ======== base styles extracted from inline rules in FanBlockRender.php ======= */
-/* 顶部小风扇图标容器 */
+/* ============================================================
+   Fan Control Plus — Unified Stylesheet
+   Modern CSS with custom properties, dark mode, responsive.
+   ============================================================ */
+
+/* === Custom Properties === */
+:root {
+  /* Colors — light mode (default) */
+  --fcp-bg: #ffffff;
+  --fcp-surface: #f8f8f8;
+  --fcp-border: #cccccc;
+  --fcp-border-focus: #888888;
+  --fcp-text: #333333;
+  --fcp-text-muted: #666666;
+  --fcp-text-label: #333333;
+  --fcp-accent: var(--blue-800, #2563eb);
+  --fcp-success: #4caf50;
+  --fcp-danger: #cc0000;
+  --fcp-input-bg: transparent;
+  --fcp-input-bg-focus: #eeeeee;
+  --fcp-fieldset-bg: transparent;
+  --fcp-divider-bg: #e8e8e8;
+  --fcp-divider-text: #555555;
+  --fcp-placeholder-bg: #f9f9f9;
+  --fcp-placeholder-border: #bbbbbb;
+  --fcp-chart-bg: #ffffff;
+  --fcp-chart-text: #333333;
+  --fcp-chart-grid: rgba(0,0,0,0.10);
+  --fcp-chart-tick: rgba(0,0,0,0.60);
+  --fcp-chart-cross: rgba(0,0,0,0.50);
+  --fcp-chart-dot: #444444;
+
+  /* Fan icon */
+  --frame-color: #000000;
+  --hub-color: #666666;
+
+  /* Spacing */
+  --fcp-gap: 0.75rem;
+  --fcp-gap-lg: 1.25rem;
+  --fcp-radius: 6px;
+  --fcp-radius-lg: 10px;
+  --fcp-padding: 1rem;
+  --fcp-padding-fieldset: 2rem 1rem 0.75rem;
+
+  /* Typography */
+  --fcp-font: inherit;
+  --fcp-font-size: 0.9rem;
+  --fcp-font-size-sm: 0.8rem;
+  --fcp-font-size-xs: 0.75rem;
+
+  /* Layout */
+  --fcp-label-width: 180px;
+  --fcp-input-max: 300px;
+  --fcp-input-max-sm: 200px;
+}
+
+/* Dark mode — via prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fcp-bg: #1a1a1a;
+    --fcp-surface: #2a2a2a;
+    --fcp-border: #444444;
+    --fcp-border-focus: #888888;
+    --fcp-text: #e0e0e0;
+    --fcp-text-muted: #aaaaaa;
+    --fcp-text-label: #e0e0e0;
+    --fcp-input-bg: transparent;
+    --fcp-input-bg-focus: #2a2a2a;
+    --fcp-fieldset-bg: transparent;
+    --fcp-divider-bg: #333333;
+    --fcp-divider-text: #aaaaaa;
+    --fcp-placeholder-bg: #2a2a2a;
+    --fcp-placeholder-border: #555555;
+    --fcp-chart-bg: #1e1e1e;
+    --fcp-chart-text: #e0e0e0;
+    --fcp-chart-grid: rgba(255,255,255,0.10);
+    --fcp-chart-tick: rgba(255,255,255,0.60);
+    --fcp-chart-cross: rgba(255,255,255,0.50);
+    --fcp-chart-dot: #ffffff;
+    --frame-color: #ffffff;
+    --hub-color: #cccccc;
+  }
+}
+
+/* Dark mode — via Unraid theme classes (JS-injected on <html>) */
+html.Theme--black,
+html.Theme--gray {
+  --fcp-bg: #1a1a1a;
+  --fcp-surface: #2a2a2a;
+  --fcp-border: #444444;
+  --fcp-border-focus: #888888;
+  --fcp-text: #e0e0e0;
+  --fcp-text-muted: #aaaaaa;
+  --fcp-text-label: #e0e0e0;
+  --fcp-input-bg: transparent;
+  --fcp-input-bg-focus: #2a2a2a;
+  --fcp-fieldset-bg: transparent;
+  --fcp-divider-bg: #333333;
+  --fcp-divider-text: #aaaaaa;
+  --fcp-placeholder-bg: #2a2a2a;
+  --fcp-placeholder-border: #555555;
+  --fcp-chart-bg: #1e1e1e;
+  --fcp-chart-text: #e0e0e0;
+  --fcp-chart-grid: rgba(255,255,255,0.10);
+  --fcp-chart-tick: rgba(255,255,255,0.60);
+  --fcp-chart-cross: rgba(255,255,255,0.50);
+  --fcp-chart-dot: #ffffff;
+  --frame-color: #ffffff;
+  --hub-color: #cccccc;
+}
+
+/* === Base Resets === */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* === Fan Area — Column Layout === */
+#fan-area {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fcp-gap-lg);
+  padding: 0.5rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  #fan-area {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fan-column {
+  display: grid;
+  gap: var(--fcp-gap-lg);
+}
+
+/* === Fan Block === */
+.fan-block {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.fan-block.draggable {
+  cursor: move;
+}
+
+.fan-block.ui-sortable-helper {
+  cursor: grabbing;
+}
+
+/* === Fieldset === */
+.fan-fieldset {
+  margin: 0;
+  padding: var(--fcp-padding-fieldset);
+  border: 1px solid var(--fcp-border);
+  border-radius: var(--fcp-radius);
+  position: relative;
+  background: var(--fcp-fieldset-bg);
+}
+
+/* === Fan Icon (top-right) === */
 .fcp-fan-icon-wrap {
   position: absolute;
   top: 10px;
@@ -8,7 +169,6 @@
   height: 36px;
 }
 
-/* 充满父容器 */
 .fcp-abs-fill {
   position: absolute;
   top: 0; left: 0;
@@ -16,7 +176,6 @@
   height: 100%;
 }
 
-/* 充满 + 帮助光标覆盖层 */
 .fcp-abs-fill-help {
   position: absolute;
   top: 0; left: 0;
@@ -26,7 +185,6 @@
   z-index: 1;
 }
 
-/* SVG 尺寸与居中 */
 .fcp-fan-icon {
   width: 36px;
   height: 36px;
@@ -34,7 +192,7 @@
   margin: auto;
 }
 
-/* 右下工具区（纵向按钮/开关等） */
+/* === Fan Tools (bottom-right) === */
 .fcp-fan-tools {
   position: absolute;
   bottom: 10px;
@@ -45,17 +203,94 @@
   height: 96px;
 }
 
-/* 宽度辅助 */
-.fcp-w-100 { width: 100%; }
-.fcp-w-300 { width: 300px; }
+/* === Fan Icon Animation === */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
-/* 表格左列帮助光标 */
-.fcp-help-cursor { cursor: help; }
+.rotating {
+  animation-name: spin;
+  animation-duration: 1.2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+}
 
-.fcp-input-idle,
-.custom-name-input {
+.frame, .hub {
+  transition: fill 0.3s ease;
+}
+
+/* === Form Layout (CSS Grid) === */
+.fcp-form {
+  display: grid;
+  grid-template-columns: var(--fcp-label-width) 1fr;
+  gap: var(--fcp-gap) var(--fcp-gap-lg);
+  align-items: baseline;
   width: 100%;
-  max-width: 300px;
+}
+
+.fcp-field {
+  display: contents;
+}
+
+/* Label */
+.fcp-label {
+  grid-column: 1;
+  text-align: right;
+  padding-top: 6px;
+  font-weight: 600;
+  font-size: var(--fcp-font-size);
+  color: var(--fcp-text-label);
+  white-space: nowrap;
+}
+
+/* Control */
+.fcp-control {
+  grid-column: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+/* Divider */
+.fcp-divider {
+  grid-column: 1 / -1;
+  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  padding-top: var(--fcp-gap);
+  padding-bottom: 0;
+  text-transform: uppercase;
+  color: var(--fcp-text);
+  border-top: 1px solid var(--fcp-border);
+  margin-top: var(--fcp-gap);
+}
+
+/* === Inputs & Selects === */
+.fcp-form input[type="text"],
+.fcp-form select {
+  font-size: var(--fcp-font-size);
+  color: var(--fcp-text);
+  background: var(--fcp-input-bg);
+  border: none;
+  border-bottom: 1px solid var(--fcp-border);
+  padding: 6px 4px;
+  border-radius: 0;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  outline: none;
+}
+
+.fcp-form input[type="text"]:focus,
+.fcp-form select:focus {
+  border-bottom-color: var(--fcp-border-focus);
+  background-color: var(--fcp-input-bg-focus);
+}
+
+.custom-name-input,
+.fcp-input-idle {
+  width: 100%;
+  max-width: var(--fcp-input-max);
   box-sizing: border-box;
 }
 
@@ -65,107 +300,70 @@
   box-sizing: border-box;
 }
 
-/* 区间一行：输入 ~ 中间符号 ~ 输入（支持 3 或 5 列） */
+/* === Range Grid (temp/speed inputs with ~ separators) === */
 .fcp-range-grid {
   display: grid;
-  grid-template-columns: 1fr 40px 1fr 40px 1fr;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: center;
   gap: 0 4px;
+  width: 100%;
 }
 
-/* 100% 宽度 + 左对齐输入框 */
-#fan-form .fcp-input-fullleft {
+.fcp-input-fullleft {
   width: 100%;
   text-align: left;
 }
 
-/* 居中（用于 ~ 符号） */
-.fcp-center { text-align: center; }
+.fcp-center {
+  text-align: center;
+  color: var(--fcp-text-muted);
+}
 
-/* 默认：小屏（手机 ≤1080px），Interval 全宽，Run Now 换行 */
-#fan-form .fcp-interval-input {
+/* === Interval Row === */
+.fcp-interval-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
   width: 100%;
-  max-width: 300px;
-  display: block;
-  margin-right: 0;
-  text-align: left;
+}
+
+.fcp-interval-input {
+  width: 100%;
+  max-width: var(--fcp-input-max);
 }
 
 .fcp-runnow {
-  display: block;
-  margin-top: 4px;
-  white-space: normal;
-  text-align: left;
+  white-space: nowrap;
   cursor: pointer;
-  font-size: 13px;
-  color: var(--blue-800);
-  margin-left: 1px;
+  font-size: var(--fcp-font-size-sm);
+  color: var(--fcp-accent);
+  transition: opacity 0.2s;
 }
 
-/* 大屏（桌面 >1080px）：Interval 固定宽度 + Run Now 同排 */
-@media (min-width: 1086px) {
-  #fan-form .fcp-interval-input {
-    width: 225px;
-    display: inline-block;
-    margin-right: 1px;
-  }
-
-  .fcp-runnow {
-    display: inline-block;
-    margin-left: 6px;
-    margin-top: 0;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
+.fcp-runnow:hover {
+  opacity: 0.8;
 }
 
-/* 统一 13px（内部图标等） */
+/* === Width Helpers === */
+.fcp-w-100 { width: 100%; }
+.fcp-w-300 { width: 100%; max-width: 300px; }
 .fcp-fs-13 { font-size: 13px; }
+.fcp-help-cursor { cursor: help; }
 
-/* ===== FanCtrl Plus: variables (auto light/dark) ===== */
-:root {
-  --frame-color: #000000;
-  --hub-color: #666666;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --frame-color: #ffffff;
-    --hub-color: #cccccc;
-  }
-}
+/* === CPU Control (hidden when disabled) === */
+.cpu-label.disabled { opacity: 0.5; }
 
-/* ===== Fan icon animation ===== */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.rotating {
-  animation-name: spin;
-  animation-duration: 1.2s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  transform-origin: 50% 50%;
-}
-.frame, .hub { transition: fill 0.3s ease; }
-
-/* ===== Small bits ===== */
-.switch-button-label {
-  display: inline-block;
-  width: 30px;
-  text-align: center;
-  font-size: 12px;
-}
-
-/* Dropdown (closed state width control) */
+/* === Dropdown Checklist Widget === */
 .pwm-controller,
 .ui-dropdownchecklist-selector-wrapper {
-  max-width: 300px !important;
+  max-width: var(--fcp-input-max);
   box-sizing: border-box;
   padding-right: 24px;
   overflow: hidden;
   white-space: nowrap;
 }
-/* Dropdown text ellipsis */
+
 .ui-dropdownchecklist-text {
   display: inline-block;
   max-width: 100%;
@@ -174,7 +372,33 @@
   text-overflow: ellipsis;
 }
 
-/* ===== Header / indicators ===== */
+/* === Actions Row === */
+.fcp-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1.25rem;
+  width: 100%;
+  text-align: center;
+}
+
+.fcp-actions .btn[disabled],
+.fcp-actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fcp-save-tip {
+  margin-left: 8px;
+  color: var(--fcp-success);
+  display: inline-block;
+  width: 160px;
+  text-align: left;
+}
+
+/* === Header / Status Indicators === */
 .fanctrl-header {
   display: flex;
   justify-content: space-between;
@@ -184,11 +408,13 @@
   box-sizing: border-box;
   padding: 0 24px;
 }
+
 .fanctrl-indicator-container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .fanctrl-label {
   font-size: 13px;
   font-weight: 500;
@@ -197,6 +423,7 @@
   text-align: left;
   transition: color 0.3s ease;
 }
+
 .fanctrl-dot {
   width: 8px;
   height: 8px;
@@ -206,24 +433,26 @@
   transform: scale(0.8);
   transition: opacity 1s ease, transform 1s ease;
 }
+
 .fanctrl-dot.visible {
   opacity: 1;
   transform: scale(1.3);
 }
-.fanctrl-stopped .fanctrl-label { color: #cc0000; }
+
+.fanctrl-stopped .fanctrl-label { color: var(--fcp-danger); }
 .fanctrl-stopped .fanctrl-dot {
-  background-color: #cc0000 !important;
-  opacity: 1 !important;
-  transform: scale(1) !important;
-  transition: none !important;
+  background-color: var(--fcp-danger);
+  opacity: 1;
+  transform: scale(1);
+  transition: none;
 }
 
-/* ===== Sort toggle ===== */
+/* === Sort Toggle === */
 .fanctrl-sort-toggle {
   position: relative;
   text-align: right;
   font-size: 13px;
-  background: transparent !important;
+  background: transparent;
   border: none;
   outline: none;
   cursor: pointer;
@@ -231,7 +460,11 @@
   box-shadow: none;
   transition: all 0.25s ease-in-out;
 }
-.fanctrl-sort-toggle:hover { transform: scale(1.1); }
+
+.fanctrl-sort-toggle:hover {
+  transform: scale(1.1);
+}
+
 .fanctrl-sort-toggle::after {
   content: "";
   position: absolute;
@@ -240,16 +473,17 @@
   margin-left: -14px;
   width: 28px;
   height: 2px;
-  background-color: transparent !important;
+  background-color: transparent;
   border-radius: 4px;
   transition: all 0.25s ease-in-out;
   pointer-events: none;
 }
+
 .fanctrl-sort-toggle:hover::after {
-  background-color: var(--orange-800);
+  background-color: var(--orange-800, #ea580c);
 }
 
-/* ===== Drag / Sortable ===== */
+/* === Drag Handle === */
 .drag-handle {
   display: none;
   position: absolute;
@@ -262,128 +496,74 @@
   font-size: 1.3em;
   transition: all 0.25s ease-in-out;
 }
-.fan-block.draggable .drag-handle { color: var(--orange-300); }
-.drag-handle:hover { transform: scale(1.2); }
 
-/* Placeholder while sorting */
+.fan-block.draggable .drag-handle {
+  color: var(--orange-300, #fdba74);
+}
+
+.drag-handle:hover {
+  transform: scale(1.2);
+}
+
+/* === Sortable Placeholder === */
 .sortable-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #bbb;
+  border: 1px solid var(--fcp-placeholder-border);
   margin: 10px;
-  border-radius: 6px;
+  border-radius: var(--fcp-radius);
   text-align: center;
-  color: #999;
+  color: var(--fcp-text-muted);
   font-size: 16px;
-  background-color: #f9f9f9;
+  background-color: var(--fcp-placeholder-bg);
 }
-/* Ghost while dragging */
+
 .fan-placeholder {
-  border: 1px solid #bbb;
-  border-radius: 6px;
-  background-color: #f9f9f9;
+  border: 1px solid var(--fcp-placeholder-border);
+  border-radius: var(--fcp-radius);
+  background-color: var(--fcp-placeholder-bg);
   width: 98%;
   box-sizing: border-box;
   margin: 0 auto;
   min-height: 180px;
 }
 
-/* ===== Form layout tweaks ===== */
+/* === Form Grid (identify/other sections) === */
 dt.containerSettingsDt {
-  width: auto !important;
+  width: auto;
   display: inline-block;
   vertical-align: middle;
   float: none;
 }
 
-/* ===== Columns / blocks ===== */
-#fan-area {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  padding: 8px;
-  align-items: start;
-}
-.fan-column {
-  display: grid;
-  gap: 16px;
-}  
-.fan-block {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-}
-.fan-fieldset {
-  margin: 0;
-  padding: 32px 16px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  position: relative;
-}
-.fan-block.draggable { cursor: move !important; }
-.fan-block.ui-sortable-helper { cursor: grabbing !important; }
-
-.cpu-label.disabled { opacity: 0.5; }
-
-.subhead {
-  font-weight: bold;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  padding-top: 6px;
-  padding-bottom: 0;
-  text-transform: uppercase;
-}
-
-/* Actions row under fan list */
-.fcp-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
+/* === Help & Tips === */
+.fcp-help-wrap {
   width: 100%;
   text-align: center;
+  margin-top: 12px;
 }
 
-/* 按钮禁用态一致化（可选） */
-.fcp-actions .btn[disabled],
-.fcp-actions button[disabled] {
-  opacity: .6;
-  cursor: not-allowed;
-}
+.fcp-help-dl { display: inline-block; }
+.fcp-help-dt { text-align: center; width: 90px; }
+.fcp-help-icon { margin-right: 4px; }
 
-/* ===== Help & Tips ===== */
-.fcp-help-wrap{
-  width:100%;
-  text-align:center;
-  margin-top:12px;
-}
-.fcp-help-dl{ display:inline-block; }
-.fcp-help-dt{
-  text-align:center;
-  width:90px;
-}
-.fcp-help-icon{ margin-right:4px; }
-
-/* 白色格子（随内容大小） */
-.fc-help-box{
+.fc-help-box {
   display: block;
   max-width: 100%;
   margin: 4px 0 10px 0;
   padding: 8px 12px;
-  background: #f8f8f8;
-  border: 1px solid #ccc;
+  background: var(--fcp-surface);
+  border: 1px solid var(--fcp-border);
   border-radius: 4px;
   font-family: sans-serif;
   font-size: 13px;
   line-height: 1.6;
+  color: var(--fcp-text);
 }
 
-/* ====== 外层包裹：Identify PWM Controller and Syslog Setting ===== */
-.fcp-block-wrap{
+/* === Block Wrap (Identify PWM + Syslog) === */
+.fcp-block-wrap {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -392,272 +572,295 @@ dt.containerSettingsDt {
   margin-top: 20px;
 }
 
-/* --- 卡片尺寸：原 flex:1 1 480px; min-width:380px --- */
-.fcp-card-480{
+.fcp-card-480 {
   flex: 1 1 480px;
   width: 100%;
 }
 
-.fcp-title-left{
+.fcp-title-left {
   display: inline-flex;
   align-items: center;
 }
 
-.fcp-icon-gap{ margin-right: 8px; }
+.fcp-icon-gap { margin-right: 8px; }
+.fcp-section { padding-top: 2rem; }
 
-.fcp-section{
-  padding-top: 2rem;
-}
-
-/* 表单网格：左标签右输入，间距更紧凑、对齐更稳 */
-.fcp-formgrid{
-  display:grid;
+/* === Form Grid (other settings pages) === */
+.fcp-formgrid {
+  display: grid;
   grid-template-columns: 50% 1fr;
   padding: 1rem 0;
   gap: 1.5rem 2rem;
 }
-.fcp-formgrid-label{ text-align:right; padding-top:6px; }
 
-/* 输入控件统一宽度（避免被系统样式拉满宽） */
-#fan-form .fcp-w-200{ width: 100%; max-width: 200px;}
-#fan-form .fcp-input{ padding-top:6px; }
-#fan-form .fcp-select{ padding-top:6px; }
+.fcp-formgrid-label { text-align: right; padding-top: 6px; }
 
-/* dt dd不被 7.1.4或以下版本影响 */
+#fan-form .fcp-w-200 { width: 100%; max-width: var(--fcp-input-max-sm); }
+#fan-form .fcp-input { padding-top: 6px; }
+#fan-form .fcp-select { padding-top: 6px; }
+
 .fcp-formgrid dt,
-.fcp-formgrid dd{
-  float: none !important;
-  width: auto !important;
-  clear: none !important;
+.fcp-formgrid dd {
+  float: none;
+  width: auto;
+  clear: none;
   margin: 0;
   padding: 0;
 }
 
-.fcp-formgrid dt{
+.fcp-formgrid dt {
   grid-column: 1;
   text-align: right;
   padding-top: 6px;
   font-weight: 600;
 }
-.fcp-formgrid dd{
+
+.fcp-formgrid dd {
   grid-column: 2;
   align-items: baseline;
   display: flex;
-}  
-
-/* 底部按钮与保存提示 */
-.fcp-actions{
-  width:100%;
-  text-align:center;
-  margin:18px 0 20px;
-  position:relative;
-}
-.fcp-save-tip{
-  margin-left:8px;
-  color:#4caf50;
-  display:inline-block;
-  width:160px;
-  text-align:left;
 }
 
-/* --- Syslog 表格区域 --- */
-.syslog-table-wrap{
-  margin: 32px auto;
-  max-width: 500px;
+/* === Switch Button === */
+.switch-button-label {
+  display: inline-block;
+  width: 30px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--fcp-text-muted);
 }
-.syslog-table{ width: 100%; }
-.syslog-table th,
-.syslog-table td{ padding: 6px 10px; }
 
-.syslog-table th.name{ text-align: left; }
-.syslog-table th.switch{ text-align: center; width: 20%; padding: 8px; }
-.syslog-table td.switch{ text-align: center; padding: 6px; }
-
-/* --- syslog开关按钮 --- */
-.switch-area{
+.switch-area {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding-top: 6px
+  padding-top: 6px;
 }
 
-.switch-button-background{
+.switch-button-background {
   position: relative;
   width: 25px;
   height: 11px;
 }
 
-.switch-button-button{
+.switch-button-button {
   position: absolute;
   top: -1px;
   left: -1px;
   width: 12px;
   height: 11px;
   background: #fff;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.08);
-  transition: left .15s ease;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  transition: left 0.15s ease;
 }
-.switch-button-background.checked .switch-button-button{
+
+.switch-button-background.checked .switch-button-button {
   left: 12px;
 }
 
-.fcp-airflow-switch{ display: none; }
-.syslog-switch{ display: none; }
-.switch-button-label{ font-size: 12px; }
-.switch-button-label.on{ display: none; }
-.switch-button-background.checked ~ .switch-button-label.on{ display: inline; }
-.switch-button-background.checked ~ .switch-button-label.off{ display: none; }
+.fcp-airflow-switch { display: none; }
+.syslog-switch { display: none; }
+.switch-button-label.on { display: none; }
+.switch-button-background.checked ~ .switch-button-label.on { display: inline; }
+.switch-button-background.checked ~ .switch-button-label.off { display: none; }
 
-/* 针对窄屏手机的 fan-block 进一步优化 */
-/* ===== Mobile overrides for FanCtrl Plus ===== */
-@media (min-width: 768px) {
-  #fan-area {
-    grid-template-columns: 1fr 1fr;  /* 横屏或平板 → 两列 */
-    align-items: start;
-  }
+/* === Syslog Table === */
+.syslog-table-wrap {
+  margin: 32px auto;
+  max-width: 500px;
 }
 
-@media (max-width: 1399px) {
-  /* fan block & fieldset 自适应全宽 */
+.syslog-table { width: 100%; }
+.syslog-table th,
+.syslog-table td { padding: 6px 10px; }
+.syslog-table th.name { text-align: left; }
+.syslog-table th.switch { text-align: center; width: 20%; padding: 8px; }
+.syslog-table td.switch { text-align: center; padding: 6px; }
+
+/* === Chart Dialog (replaces SweetAlert2) === */
+.fcp-chart-dialog {
+  border: 1px solid var(--fcp-border);
+  border-radius: var(--fcp-radius-lg);
+  background: var(--fcp-chart-bg);
+  color: var(--fcp-chart-text);
+  padding: 0;
+  max-width: 90vw;
+  width: 700px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.fcp-chart-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.fcp-chart-dialog .fcp-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px 8px;
+  border-bottom: 1px solid var(--fcp-border);
+}
+
+.fcp-chart-dialog .fcp-chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.fcp-chart-dialog .fcp-chart-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--fcp-text-muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.fcp-chart-dialog .fcp-chart-close:hover {
+  background: var(--fcp-surface);
+}
+
+.fcp-chart-dialog .fcp-chart-body {
+  padding: 16px 24px 24px;
+}
+
+.fcp-chart-dialog .fcp-chart-live-note {
+  margin-top: 12px;
+  text-align: center;
+  color: var(--fcp-chart-text);
+  font-size: 13px;
+}
+
+.fcp-chart-dialog .fcp-chart-footer {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--fcp-text-muted);
+  text-align: center;
+}
+
+/* Chart crosshair elements */
+.chart-vline,
+.chart-hline {
+  background: var(--fcp-chart-cross);
+}
+
+.chart-dot {
+  background: var(--fcp-chart-dot);
+}
+
+.chart-current {
+  color: var(--fcp-chart-text);
+}
+
+/* === Warning Dialog === */
+.fcp-warning-dialog {
+  border: 1px solid var(--fcp-border);
+  border-radius: var(--fcp-radius-lg);
+  background: var(--fcp-chart-bg);
+  color: var(--fcp-chart-text);
+  padding: 24px;
+  max-width: 400px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.fcp-warning-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.fcp-warning-dialog .fcp-warning-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.fcp-warning-dialog .fcp-warning-actions {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.fcp-warning-dialog button {
+  padding: 6px 16px;
+  border: 1px solid var(--fcp-border);
+  border-radius: 4px;
+  background: var(--fcp-surface);
+  color: var(--fcp-text);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.fcp-warning-dialog button:hover {
+  background: var(--fcp-divider-bg);
+}
+
+/* === Responsive === */
+
+/* Tablet */
+@media (max-width: 1024px) {
   .fan-block,
   .fan-fieldset {
     width: 100%;
     max-width: 100%;
-    box-sizing: border-box;
-    padding-bottom: 8px;
   }
 
-  /* 让 fieldset 支持内部 flex 布局 */
   .fan-fieldset {
-    display: flex !important;
-    flex-direction: column !important;
+    display: flex;
+    flex-direction: column;
   }
 
   .fcp-fan-tools {
-    order: 99 !important;          /* 永远在最后 */
-    margin-top: auto !important;   /* 推到底部 */
-    position: static !important;
-    width: 100% !important;
-    height: auto !important;
-
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: flex-end !important;
-    align-items: center !important;
+    order: 99;
+    margin-top: auto;
+    position: static;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   .fcp-fan-icon-wrap {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
 
   .fcp-fan-icon {
-    width: 34px;
-    height: 34px;
-    display: block;
-    margin: auto;
+    width: 32px;
+    height: 32px;
   }
 
-  /* 覆盖下拉框行内 300px 宽度 */
   .ui-dropdownchecklist-selector,
   .ui-dropdownchecklist-selector-wrapper,
   .cpu-input {
-    width: 100% !important;
-    max-width: 300px !important;
-    display: block !important;
-  }
-  .ui-dropdownchecklist-text {
-    white-space: normal !important;
-    text-overflow: initial !important;
-  }
-}
-  
-@media (max-width: 1024px) {
-  /* fan block & fieldset 自适应全宽 */
-  .fan-block,
-  .fan-fieldset {
     width: 100%;
     max-width: 100%;
-    box-sizing: border-box;
-    padding-bottom: 8px;
-  }
-
-  /* 让 fieldset 支持内部 flex 布局 */
-  .fan-fieldset {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .fcp-fan-tools {
-    order: 99 !important;          /* 永远在最后 */
-    margin-top: auto !important;   /* 推到底部 */
-    position: static !important;
-    width: 100% !important;
-    height: auto !important;
-
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: flex-end !important;
-    align-items: center !important;
-  }
-
-  .fcp-fan-icon-wrap {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-  }
-
-  .fcp-fan-icon {
-    width: 32px;
-    height: 32px;
     display: block;
-    margin: auto;
   }
 
-  /* 覆盖掉固定宽度的 input / select / dropdown */
+  .ui-dropdownchecklist-text {
+    white-space: normal;
+    text-overflow: initial;
+  }
+
+  /* Inputs full width on tablet */
   .custom-name-input,
   .fcp-input-idle,
   .pwm-controller,
   .ui-dropdownchecklist-selector-wrapper {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
   }
 
-  /* 覆盖下拉框行内 300px 宽度 */
-  .ui-dropdownchecklist-selector,
-  .ui-dropdownchecklist-selector-wrapper,
-  .cpu-input {
-    width: 100% !important;
-    max-width: 100% !important;
-    display: block !important;
-  }
-  .ui-dropdownchecklist-text {
-    white-space: normal !important;
-    text-overflow: initial !important;
-  }
-
-  /* Disk / CPU Temp Range 输入框 grid 自适应（3 或 5 列） */
   .fcp-range-grid {
-    grid-template-columns: 1fr auto 1fr auto 1fr !important;
-    gap: 4px !important;
-  }
-  .fcp-range-grid input[type="text"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
+    gap: 4px;
   }
 }
 
+/* Mobile */
 @media (max-width: 768px) {
   .fcp-fan-icon-wrap {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     width: 30px;
     height: 30px;
   }
@@ -665,26 +868,84 @@ dt.containerSettingsDt {
   .fcp-fan-icon {
     width: 30px;
     height: 30px;
-    display: block;
-    margin: auto;
   }
 
-  #fan-form .fcp-interval-input {
+  /* Stack label above control on mobile */
+  .fcp-form {
+    grid-template-columns: 1fr;
+    gap: var(--fcp-gap);
+  }
+
+  .fcp-label {
+    grid-column: 1;
+    text-align: left;
+    padding-top: 0;
+    padding-bottom: 2px;
+  }
+
+  .fcp-control {
+    grid-column: 1;
+  }
+
+  .fcp-divider {
+    grid-column: 1;
+  }
+
+  .fcp-interval-input {
     width: 100%;
     max-width: 100%;
-    display: block;
-    margin-right: 0;
-    text-align: left;
   }
 
   .fcp-runnow {
     display: block;
     margin-top: 4px;
-    white-space: normal;
-    text-align: left;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--blue-800);
-    margin-left: 1px;
   }
+}
+
+/* Large desktop */
+@media (min-width: 1086px) {
+  .fcp-interval-input {
+    width: 225px;
+    display: inline-block;
+    margin-right: 1px;
+  }
+
+  .fcp-runnow {
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+}
+
+/* === Title Elements (fanctrlplus.page) === */
+.fcp-title-icon {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.fcp-title-text {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.fcp-refresh-icon {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--fcp-accent);
+  vertical-align: middle;
+}
+
+/* === Identify Dialog === */
+.fcp-identify-dialog {
+  border: 1px solid var(--fcp-border);
+  border-radius: var(--fcp-radius-lg);
+  background: var(--fcp-chart-bg);
+  color: var(--fcp-chart-text);
+  padding: 0;
+  max-width: 560px;
+  width: 90vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.fcp-identify-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
 }
