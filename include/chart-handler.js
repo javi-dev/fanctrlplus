@@ -64,6 +64,10 @@ window.showFanChart = function (btn) {
   const hasDiskChart = diskSelected && pwmMin !== null && pwmMax !== null;
   const hasCpuChart = cpuEnabled && cpuLow !== null && cpuHigh !== null;
 
+  // Read mid-point values (may be null if not filled in)
+  const tempMid = getNum('[name^="mid_temp["]');
+  const pwmMid = getNum('[name^="mid_pwm_percent["]');
+
   if ([pwmMin, pwmMax, tempLow, tempHigh].some(v => v === null)) {
     Swal.fire('⚠️ Missing input', 'Please fill in all Disk Temp and PWM values.', 'warning');
     return;
@@ -88,8 +92,28 @@ window.showFanChart = function (btn) {
   const datasets = [];
 
   if (diskSelected && tempLow !== null && tempHigh !== null) {
-    const diskPoints = makeLinePoints(tempLow, pwmMin, tempHigh, pwmMax);
-    const diskRadius = makePointRadiusArray(diskPoints.length);
+    // Build disk curve: if mid_temp and mid_pwm are provided, draw 2-segment piecewise curve
+    let diskPoints;
+    let diskRadius;
+
+    if (tempMid !== null && pwmMid !== null) {
+      // Piecewise: segment 1 from (tempLow, pwmMin) to (tempMid, pwmMid),
+      //            segment 2 from (tempMid, pwmMid) to (tempHigh, pwmMax)
+      const seg1 = makeLinePoints(tempLow, pwmMin, tempMid, pwmMid);
+      const seg2 = makeLinePoints(tempMid, pwmMid, tempHigh, pwmMax);
+      // Concatenate, skipping the duplicate midpoint from seg2
+      diskPoints = seg1.concat(seg2.slice(1));
+
+      // Show radius at endpoints and midpoint
+      diskRadius = Array.from({ length: diskPoints.length }, (_, i) => {
+        if (i === 0 || i === seg1.length - 1 || i === diskPoints.length - 1) return 4;
+        return 0;
+      });
+    } else {
+      // Fallback: single line from (tempLow, pwmMin) to (tempHigh, pwmMax)
+      diskPoints = makeLinePoints(tempLow, pwmMin, tempHigh, pwmMax);
+      diskRadius = makePointRadiusArray(diskPoints.length);
+    }
 
     datasets.push({
     label: 'Disk Temp → PWM (%)',
@@ -102,6 +126,21 @@ window.showFanChart = function (btn) {
     fill: false,
     tension: 0.4,
     });
+
+    // If a midpoint is defined, add a visible marker at the midpoint
+    if (tempMid !== null && pwmMid !== null) {
+      datasets.push({
+        label: `Midpoint (${tempMid}°C → ${pwmMid}%)`,
+        data: [{ x: tempMid, y: pwmMid }],
+        borderColor: '#00bcd4',
+        backgroundColor: '#00bcd4',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        pointStyle: 'circle',
+        showLine: false,
+        fill: false,
+      });
+    }
   }
 
   if (cpuEnabled && cpuLow !== null && cpuHigh !== null) {
@@ -313,7 +352,7 @@ window.showFanChart = function (btn) {
         let percent = null, html = '';
         if (spunDown) {
           if (origin === 'Idle') {
-            // Idle：无温度源；若本 block 只选 HDD 且 CPU 未启用，补充“磁盘已休眠”的语义
+            // Idle：无温度源；若本 block 只选 HDD 且 CPU 未启用，补充"磁盘已休眠"的语义
             const suffix = (snapDiskSelected && !snapCpuEnabled)
               ? '(All selected HDDs are spun down — using Idle Speed)'
               : '(No temperature source — using Idle Speed)';
