@@ -192,15 +192,14 @@ html.Theme--gray {
   margin: auto;
 }
 
-/* === Fan Tools (bottom-right) === */
+/* === Fan Tools (top-right, below icon) === */
 .fcp-fan-tools {
   position: absolute;
-  bottom: 10px;
+  top: 50px;
   right: 10px;
   display: flex;
-  flex-direction: column;
-  width: 86px;
-  height: 96px;
+  flex-direction: row;
+  gap: 4px;
 }
 
 /* === Fan Icon Animation === */
