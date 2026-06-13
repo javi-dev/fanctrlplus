@@ -7,7 +7,7 @@
 <!ENTITY pluginURL "https://raw.githubusercontent.com/javi-dev/fanctrlplus/main/unraid/&name;.plg">
 <!ENTITY source "/boot/config/plugins/&name;">
 <!ENTITY txz "/boot/config/plugins/fanctrlplus/fanctrlplus-&version;.txz">
-<!ENTITY MD5 "28e2fb69f64aa5db6119e7173e56a7da">
+<!ENTITY MD5 "">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.9.0" support="https://forums.unraid.net/topic/191722-plugin-fancrtl-plus">
