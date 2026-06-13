@@ -65,9 +65,8 @@ foreach ($all_cfg as $cfg) {
       </span>
       <span class="w18 fanctrlplus-fanstatus" data-label="$label">--</span>
       <span class="w18">
-        <span class="fa fa-refresh fanctrlplus-refresh"
+        <span class="fa fa-refresh fanctrlplus-refresh fcp-refresh-icon"
           data-label="$label"
-          style="cursor:pointer;font-size:13px;color:var(--blue-800);vertical-align:middle;"
           title="Manual Run: Read current temperature and set fan speed immediately"></span>
       </span>
     </td>
@@ -316,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
       refreshSingleFan(label);
 
       setTimeout(() => {
-        btn.style.color = 'var(--blue-800)';
+        btn.style.color = '';
         btn.classList.remove('fa-spin');
       }, 1800);
 
