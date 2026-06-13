@@ -4,7 +4,7 @@
 <!ENTITY version "1.3.3">
 <!ENTITY author "ck9393">
 <!ENTITY launch "Settings/fanctrlplus">
-<!ENTITY pluginURL "https://raw.githubusercontent.com/ck9393/fanctrlplus/main/unraid/&name;.plg">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/javi-dev/fanctrlplus/main/unraid/&name;.plg">
 <!ENTITY source "/boot/config/plugins/&name;">
 <!ENTITY txz "/boot/config/plugins/fanctrlplus/fanctrlplus-&version;.txz">
 <!ENTITY MD5 "28e2fb69f64aa5db6119e7173e56a7da">
@@ -152,7 +152,7 @@ fi
 
 <!-- 下载并安装新的 .txz -->
 <FILE Name="&txz;" Run="upgradepkg --install-new --reinstall">
-<URL>https://github.com/ck9393/fanctrlplus/releases/download/v&version;/&name;-&version;.txz</URL>
+<URL>https://github.com/javi-dev/fanctrlplus/releases/download/v&version;/&name;-&version;.txz</URL>
 <MD5>&MD5;</MD5>
 </FILE>
 
