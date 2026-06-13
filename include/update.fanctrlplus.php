@@ -45,6 +45,13 @@ foreach ($_POST['#file'] as $i => $file) {
   $high_raw = $_POST['high'][$i] ?? '';
   $low_temp = is_numeric($l = preg_replace('/[^0-9]/', '', $low_raw)) ? intval($l) : 40;
   $high_temp = is_numeric($h = preg_replace('/[^0-9]/', '', $high_raw)) ? intval($h) : 60;
+  // mid temp / mid pwm
+  $mid_raw = $_POST['mid_temp'][$i] ?? '';
+  $mid_temp = is_numeric($m = preg_replace('/[^0-9]/', '', $mid_raw)) ? intval($m) : 43;
+  $mid_pwm_raw = $_POST['mid_pwm_percent'][$i] ?? '39';
+  $mid_pwm_val = preg_replace('/[^0-9]/', '', $mid_pwm_raw);
+  $mid_pwm = ($mid_pwm_val !== '' && is_numeric($mid_pwm_val)) ? max(0, min(100, intval($mid_pwm_val))) : 39;
+  $mid_pwm_abs = round($mid_pwm * 255 / 100);
 
   // ===== Fan Speed on Idle (%) → cfg: idle(0..255) =====
   // 1) 读取 Idle 百分比（默认 0）
@@ -195,6 +202,8 @@ foreach ($_POST['#file'] as $i => $file) {
     'cpu_sensor'    => $cpu_sensor,
     'cpu_min_temp'  => $cpu_min_temp,
     'cpu_max_temp'  => $cpu_max_temp,
+    'mid_temp' => $mid_temp,
+    'mid_pwm' => (string)$mid_pwm_abs,
   ];
 
   $content = '';
