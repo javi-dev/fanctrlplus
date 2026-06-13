@@ -99,18 +99,30 @@ while true; do
       fi
     done
 
-    # 若取得有效温度，再执行 PWM 推算
+    # 若取得有效温度，再执行 PWM 推算 (2-segment piecewise)
     if (( found_valid_temp == 1 )); then
       disk_max=$disk_max_valid
+
+      # 2-segment piecewise curve for noise reduction
+      # Segment 1: low → mid_temp (gentle ramp, fans stay quiet)
+      # Segment 2: mid_temp → high (steep ramp, safety)
+      mid_temp="${mid_temp:-43}"
+      mid_pwm="${mid_pwm:-100}"
 
       if (( disk_max <= low )); then
         disk_pwm_val=$pwm
       elif (( disk_max >= high )); then
         disk_pwm_val=$max
-      else
+      elif (( disk_max <= mid_temp )); then
         delta=$((disk_max - low))
-        range=$((high - low))
-        disk_pwm_val=$((pwm + delta * (max - pwm) / range))
+        range=$((mid_temp - low))
+        (( range == 0 )) && range=1
+        disk_pwm_val=$((pwm + delta * (mid_pwm - pwm) / range))
+      else
+        delta=$((disk_max - mid_temp))
+        range=$((high - mid_temp))
+        (( range == 0 )) && range=1
+        disk_pwm_val=$((mid_pwm + delta * (max - mid_pwm) / range))
       fi
     fi
   fi
