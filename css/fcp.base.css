@@ -345,7 +345,6 @@ html.Theme--gray {
 }
 
 /* === Width Helpers === */
-.fcp-w-100 { width: 100%; }
 .fcp-w-300 { width: 100%; max-width: 300px; }
 .fcp-fs-13 { font-size: 13px; }
 .fcp-help-cursor { cursor: help; }
@@ -417,7 +416,7 @@ html.Theme--gray {
 .fanctrl-label {
   font-size: 13px;
   font-weight: 500;
-  color: #00b300;
+  color: var(--fcp-success);
   min-width: 50px;
   text-align: left;
   transition: color 0.3s ease;
@@ -427,7 +426,7 @@ html.Theme--gray {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #00b300;
+  background-color: var(--fcp-success);
   opacity: 0;
   transform: scale(0.8);
   transition: opacity 1s ease, transform 1s ease;
@@ -529,12 +528,6 @@ html.Theme--gray {
 }
 
 /* === Form Grid (identify/other sections) === */
-dt.containerSettingsDt {
-  width: auto;
-  display: inline-block;
-  vertical-align: middle;
-  float: none;
-}
 
 /* === Help & Tips === */
 .fcp-help-wrap {
@@ -648,7 +641,7 @@ dt.containerSettingsDt {
   left: -1px;
   width: 12px;
   height: 11px;
-  background: #fff;
+  background: var(--fcp-text);
   box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
   transition: left 0.15s ease;
 }
@@ -947,4 +940,54 @@ dt.containerSettingsDt {
 
 .fcp-identify-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
+}
+
+/* === Dark Mode Enhancements === */
+/* Ensure form elements look good in Unraid dark themes */
+html.Theme--black .fcp-form input[type="text"],
+html.Theme--gray .fcp-form input[type="text"],
+html.Theme--black .fcp-form select,
+html.Theme--gray .fcp-form select {
+  color: var(--fcp-text);
+  background-color: var(--fcp-input-bg);
+  border-bottom-color: var(--fcp-border);
+}
+
+html.Theme--black .fcp-form select option,
+html.Theme--gray .fcp-form select option {
+  background-color: var(--fcp-bg);
+  color: var(--fcp-text);
+}
+
+html.Theme--black .fan-fieldset,
+html.Theme--gray .fan-fieldset {
+  border-color: var(--fcp-border);
+}
+
+html.Theme--black .fcp-divider,
+html.Theme--gray .fcp-divider {
+  border-top-color: var(--fcp-border);
+  color: var(--fcp-text);
+}
+
+html.Theme--black .fc-help-box,
+html.Theme--gray .fc-help-box {
+  background: var(--fcp-surface);
+  border-color: var(--fcp-border);
+  color: var(--fcp-text);
+}
+
+html.Theme--black .switch-button-label,
+html.Theme--gray .switch-button-label {
+  color: var(--fcp-text-muted);
+}
+
+html.Theme--black .inline_help,
+html.Theme--gray .inline_help {
+  color: var(--fcp-text-muted);
+}
+
+html.Theme--black .fcp-sort-toggle::after,
+html.Theme--gray .fcp-sort-toggle::after {
+  background-color: transparent;
 }
