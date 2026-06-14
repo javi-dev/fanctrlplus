@@ -991,3 +991,10 @@ html.Theme--black .fcp-sort-toggle::after,
 html.Theme--gray .fcp-sort-toggle::after {
   background-color: transparent;
 }
+
+/* === Help Section Utility Classes === */
+.fcp-text-danger { color: var(--fcp-danger); }
+.fcp-help-heading { margin: 10px 0 6px 0; font-weight: bold; }
+.fcp-help-list { margin: 6px 0 10px 16px; }
+.fcp-help-tip { margin-top: 8px; }
+.fcp-text-left { text-align: left; }
