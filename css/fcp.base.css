@@ -999,3 +999,58 @@ html.Theme--gray .fcp-sort-toggle::after {
 .fcp-help-tip { margin-top: 8px; }
 .fcp-text-left { text-align: left; }
 .fcp-text-indent { text-indent: 0.3rem; }
+
+/* === Modal Overlay (Identify, etc.) === */
+.fcp-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fcp-modal-box {
+  background: var(--fcp-chart-bg, #fff);
+  color: var(--fcp-chart-text, #333);
+  border: 1px solid var(--fcp-border, #ccc);
+  border-radius: var(--fcp-radius-lg, 10px);
+  max-width: 560px;
+  width: 90vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.fcp-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px 8px;
+  border-bottom: 1px solid var(--fcp-border, #ccc);
+}
+
+.fcp-modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.fcp-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--fcp-text-muted, #666);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.fcp-modal-close:hover {
+  background: var(--fcp-surface, #f0f0f0);
+}
+
+.fcp-modal-body {
+  padding: 16px 24px 24px;
+}
