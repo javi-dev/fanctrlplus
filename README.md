@@ -72,17 +72,16 @@ This keeps the system silent under normal load while still spinning up aggressiv
 
 ## Installation
 
-Same as upstream — available in Community Apps (CA). Search for "**FanCtrl Plus**".
+This fork is **not** in Community Applications. Install it manually via the Unraid plugin system:
 
-To install from this fork directly:
+1. Go to **Settings → Plugin Installer**
+2. Paste this URL:
+   ```
+   https://raw.githubusercontent.com/javi-dev/fanctrlplus/main/unraid/fanctrlplus.plg
+   ```
+3. Click **Install**
 
-```bash
-# Download the latest release txz
-wget https://github.com/javi-dev/fanctrlplus/releases/latest/download/fanctrlplus-1.3.3-fork.txz
-
-# Install
-upgradepkg --install-new /boot/config/plugins/fanctrlplus/fanctrlplus-1.3.3-fork.txz
-```
+If you already have the upstream version installed, this will overwrite it. Your fan configurations (`.cfg` files in `/boot/config/plugins/fanctrlplus/`) are preserved.
 
 ## Credits
 
