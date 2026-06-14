@@ -43,8 +43,8 @@ fi
 
 prev_pwm=-1
 prev_temp=-1
-HYSTERESIS=2    # °C — ignore temp changes smaller than this
-MAX_RAMP=10     # PWM units — max change per cycle (gradual ramp)
+HYSTERESIS=2      # °C — ignore temp changes smaller than this
+RAMP_PER_MIN=50   # PWM units per minute — controls ramp speed
 
 while true; do
   # === CPU 温度 ===
@@ -173,11 +173,13 @@ while true; do
 
   # === PWM smoothing: ramp gradually toward target ===
   if [[ "$prev_pwm" != -1 && "$pwm_val" =~ ^[0-9]+$ ]]; then
+    max_step=$(( RAMP_PER_MIN * interval ))
+    (( max_step < 10 )) && max_step=10  # minimum step
     diff=$((pwm_val - prev_pwm))
-    if (( diff > MAX_RAMP )); then
-      pwm_val=$((prev_pwm + MAX_RAMP))
-    elif (( diff < -MAX_RAMP )); then
-      pwm_val=$((prev_pwm - MAX_RAMP))
+    if (( diff > max_step )); then
+      pwm_val=$((prev_pwm + max_step))
+    elif (( diff < -max_step )); then
+      pwm_val=$((prev_pwm - max_step))
     fi
   fi
 
