@@ -194,7 +194,7 @@ $mytiles[$pluginname]['column2'] = <<<EOT
         <span class="full">TEMP (SOURCE)</span>
         <span class="mobile">TEMP</span>
       </span>
-      <span class="w18" style="text-indent:0.3rem;">RPM / PWM%</span>
+      <span class="w18" class="fcp-text-indent">RPM / PWM%</span>
       <span class="w18">STATUS</span>
       <span class="w18">RUN</span>
     </td>
