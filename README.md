@@ -1,37 +1,89 @@
-# **FanCtrl Plus**
+# **FanCtrl Plus** (Fork)
 
-**FanCtrl Plus** is an Unraid plugin that provides automatic fan control based on the temperatures of HDDs, NVMe drives, Unassigned Devices, and optionally the CPU.  
-Each fan configuration can monitor specific drives or the CPU, define a temperature range, and scale fan speed automatically using a linear control algorithm.  
-Configuration is done through a user-friendly interface, with custom thresholds, intervals, and labels available per fan.
+Fork of [ck9393/fanctrlplus](https://github.com/ck9393/fanctrlplus) with a focus on **noise reduction**, **modern UI**, and **security hardening**.
 
-## ✨ Features
+## What's different from upstream
 
-- Full-featured Web UI for configuration and monitoring
-- Supports temporary fan configuration with safe validation and custom naming
-- Automatically starts with the Unraid array for hands-free operation
-- Set custom thresholds and intervals per fan
-- Control multiple PWM fans independently
-- Monitor temps from array disks, NVMe, unassigned devices, and optionally the CPU
-- Uses a linear control algorithm to smoothly adjust fan speed (PWM) based on the current temperature (disk or CPU) between your defined low/high values
-- Identify and label PWM controllers to match physical fans easily
-- Dashboard tile and system integration
-- Optional FCP Airflow Dashboard tile, similar to Unraid’s built-in Airflow tile but enhanced with support for custom fan labels
-- Drag and drop fan configuration boxes to reorder them as you like. The new order is saved and reflected in both the UI and Dashboard.
+### 🎯 2-Segment Piecewise Fan Curve
 
----
+The original plugin uses a single linear ramp between Low and High temperature. This fork adds a **midpoint** (`mid_temp` / `mid_pwm`) that splits the curve into two segments:
 
-## 🔧 Manual Installation
+```
+Fan Speed
+  100% ─                          ╱───── High (45°C)
+       │                        ╱
+  ~39% ─              ╱────────╱  ← Mid (43°C, PWM 100)
+       │            ╱  Gentle     Steep
+    0% ────────────╱    ramp       ramp
+       └──────────────────────────────
+       Low (39°C)   Mid (43°C)   High (45°C)
+                Disk Temperature
+```
 
-**FanCtrl Plus** is available in Community Apps (CA). Just search for “**FanCtrl Plus**” to install.
+- **Segment 1** (Low → Mid): gentle ramp, fans stay quiet during normal operation
+- **Segment 2** (Mid → High): steep ramp, safety when approaching critical temps
 
-Support / Issues
-- https://forums.unraid.net/topic/191722-plugin-fancrtl-plus/
+This keeps the system silent under normal load while still spinning up aggressively when needed.
 
-- If you find this plugin helpful, consider buying me a coffee!
+### 🔇 Hysteresis & PWM Smoothing
 
-<p align="left">
-  <a href="https://www.paypal.com/paypalme/cck9393" target="_blank">
-    <img src="https://raw.githubusercontent.com/ck9393/fanctrlplus/main/.github/assets/donate.png" alt="Donate" width="90">
-  </a>
-</p>
+- **Hysteresis** (2°C): ignores temperature changes smaller than 2°C. Prevents fan speed oscillation when temp hovers at curve boundaries.
+- **PWM ramping** (50 PWM/min): fans ramp gradually toward the target instead of jumping. Eliminates the acoustic "whoosh" of sudden speed changes. Scales with the configured interval.
 
+### 🎨 Modern UI
+
+- **CSS Grid/Flexbox** layout replaces `<table>`-based forms
+- **CSS custom properties** for consistent theming
+- **Full dark mode** — supports Unraid's Black and Gray themes via `prefers-color-scheme` and `Theme--black`/`Theme--gray` classes
+- **Responsive** — 3 breakpoints (768px, 1024px, 1086px)
+- **Zero inline styles** — all styling via CSS classes
+- **No SweetAlert2** — chart modal uses native `<dialog>`, identify modal uses vanilla JS overlay
+- **Zero external JS dependencies** beyond Chart.js and jQuery (which Unraid provides)
+
+### 🔒 Security Hardening
+
+- **PWM path whitelist** — `identify` and `savelabel` endpoints validate paths match `/sys/devices/.../pwm\d+$`
+- **Input validation** — `delete` and `setsyslog` validate filenames match `fanctrlplus_*.cfg`
+- **LOCK_EX** on all `file_put_contents` calls — prevents race condition corruption
+- **`escapeshellarg`** on logger messages — prevents shell injection
+- **`display_errors=0`** — no PHP error details leaked to browser
+- **Division by zero protection** in CPU and disk temp range calculations
+
+### 🐛 Bug Fixes (vs upstream)
+
+- CSS grid alignment for 5-element temperature range (Low ~ Mid ~ High)
+- Missing `?>` closing tag in disk title attribute (PHP parse error)
+- Duplicate `$op` variable declaration removed
+- `parse_ini_file` return value checked before array access
+- `log_enable` read once at startup instead of grep per cycle
+
+## Files modified vs upstream
+
+| File | Changes |
+|------|---------|
+| `scripts/fanctrlplus_loop.sh` | Piecewise curve, hysteresis, PWM smoothing, div-by-zero fix |
+| `include/FanBlockRender.php` | CSS Grid layout, mid_temp/mid_pwm fields |
+| `include/FanctrlLogic.php` | PWM whitelist, input validation, LOCK_EX, display_errors |
+| `include/update.fanctrlplus.php` | Save handler for mid_temp/mid_pwm, LOCK_EX |
+| `include/chart-handler.js` | 2-segment chart with midpoint marker, native `<dialog>` |
+| `css/fcp.base.css` | Complete rewrite: custom properties, dark mode, responsive |
+| `fanctrlplus.page` | Modern UI, no SweetAlert2, no inline styles |
+| `FanctrlPlus.Dashboard.page` | Inline styles replaced with CSS classes |
+
+## Installation
+
+Same as upstream — available in Community Apps (CA). Search for "**FanCtrl Plus**".
+
+To install from this fork directly:
+
+```bash
+# Download the latest release txz
+wget https://github.com/javi-dev/fanctrlplus/releases/latest/download/fanctrlplus-1.3.3-fork.txz
+
+# Install
+upgradepkg --install-new /boot/config/plugins/fanctrlplus/fanctrlplus-1.3.3-fork.txz
+```
+
+## Credits
+
+Original plugin by [ck9393](https://github.com/ck9393/fanctrlplus).
