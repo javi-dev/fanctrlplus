@@ -608,64 +608,66 @@ $(function() {
     return (val ?? '').toString().replace(/\s*(min|°C|%)/gi, '').trim();
   }
 
-  // Identify modal — simple overlay (no Swal2, no <dialog>)
+  // Identify modal — vanilla JS overlay (no jQuery, no Swal2, no <dialog>)
   function showIdentifyModal(pwm = '') {
     // Remove any existing overlay
-    $('#fcp-identify-overlay').remove();
+    const old = document.getElementById('fcp-identify-overlay');
+    if (old) old.remove();
 
-    const $overlay = $(`
-      <div id="fcp-identify-overlay" class="fcp-modal-overlay">
-        <div class="fcp-modal-box">
-          <div class="fcp-modal-header">
-            <h3 class="fcp-modal-title">Identify PWM Controller</h3>
-            <button class="fcp-modal-close" title="Close">&times;</button>
+    const overlay = document.createElement('div');
+    overlay.id = 'fcp-identify-overlay';
+    overlay.className = 'fcp-modal-overlay';
+    overlay.innerHTML = `
+      <div class="fcp-modal-box">
+        <div class="fcp-modal-header">
+          <h3 class="fcp-modal-title">Identify PWM Controller</h3>
+          <button class="fcp-modal-close" title="Close">&times;</button>
+        </div>
+        <div class="fcp-modal-body">
+          <div class="fcp-swal-intro">
+            You've selected a PWM controller that hasn't been labeled yet.<br>
+            To help identify which physical fan it controls, first choose an <b>Identify Mode</b> (<b>Pause</b>, <b>Max</b>, or <b>Pulse</b>), then click <b>Identify</b> and observe how the fan reacts.
+            <br><br>
+            <em>Note:</em> some fans have a built-in minimum RPM; with <b>Pause</b> they may slow to their minimum instead of fully stopping.
+            <br><br>
+            If you don't need to identify it now, just click <b>Close</b> to continue setting up.<br>
+            This feature is also available anytime in the <b>Identify PWM Controller</b> section below.
           </div>
-          <div class="fcp-modal-body">
-            <div class="fcp-swal-intro">
-              You've selected a PWM controller that hasn't been labeled yet.<br>
-              To help identify which physical fan it controls, first choose an <b>Identify Mode</b> (<b>Pause</b>, <b>Max</b>, or <b>Pulse</b>), then click <b>Identify</b> and observe how the fan reacts.
-              <br><br>
-              <em>Note:</em> some fans have a built-in minimum RPM; with <b>Pause</b> they may slow to their minimum instead of fully stopping.
-              <br><br>
-              If you don't need to identify it now, just click <b>Close</b> to continue setting up.<br>
-              This feature is also available anytime in the <b>Identify PWM Controller</b> section below.
-            </div>
 
-            <div style="margin: 12px 0;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <label for="identify-modal-select" style="min-width:160px; text-align:right;">Select PWM Controller:</label>
-                <select id="identify-modal-select" style="flex:1; max-width:220px;"></select>
-              </div>
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <label for="identify-modal-mode-select" style="min-width:160px; text-align:right;">Identify Mode:</label>
-                <select id="identify-modal-mode-select" style="flex:1; max-width:220px;">
-                  <option value="pause" selected>Pause (30s)</option>
-                  <option value="max">Max Speed (30s)</option>
-                  <option value="pulse">Pulse (40s)</option>
-                </select>
-              </div>
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <label for="identify-modal-label-input" style="min-width:160px; text-align:right;">Custom Label:</label>
-                <input type="text" id="identify-modal-label-input" placeholder="Label (e.g. Rear Fan)" style="flex:1; max-width:220px;">
-              </div>
+          <div class="fcp-modal-form">
+            <div class="fcp-modal-row">
+              <label for="identify-modal-select">Select PWM Controller:</label>
+              <select id="identify-modal-select"></select>
             </div>
+            <div class="fcp-modal-row">
+              <label for="identify-modal-mode-select">Identify Mode:</label>
+              <select id="identify-modal-mode-select">
+                <option value="pause" selected>Pause (30s)</option>
+                <option value="max">Max Speed (30s)</option>
+                <option value="pulse">Pulse (40s)</option>
+              </select>
+            </div>
+            <div class="fcp-modal-row">
+              <label for="identify-modal-label-input">Custom Label:</label>
+              <input type="text" id="identify-modal-label-input" placeholder="Label (e.g. Rear Fan)">
+            </div>
+          </div>
 
-            <div class="fcp-swal-actions">
-              <button type="button" class="btn" id="identify-btn">Identify</button>
-              <button type="button" class="btn" id="save-label-btn">Save Label</button>
-              <span id="identify-modal-label-tip" class="save-tip"></span>
-            </div>
+          <div class="fcp-swal-actions">
+            <button type="button" class="btn" id="identify-btn">Identify</button>
+            <button type="button" class="btn" id="save-label-btn">Save Label</button>
+            <span id="identify-modal-label-tip" class="save-tip"></span>
           </div>
         </div>
       </div>
-    `);
+    `;
 
-    $('body').append($overlay);
+    document.body.appendChild(overlay);
 
     // Close handlers
-    $overlay.find('.fcp-modal-close').on('click', function() { $overlay.remove(); });
-    $overlay.on('click', function(e) {
-      if (e.target === $overlay[0]) $overlay.remove();
+    overlay.querySelector('.fcp-modal-close').addEventListener('click', function() { overlay.remove(); });
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
     });
 
     // Load PWM options
@@ -676,14 +678,14 @@ $(function() {
     }
 
     // Identify button
-    $overlay.find('#identify-btn').on('click', function () {
-      const pwmVal  = $overlay.find('#identify-modal-select').val();
-      const modeVal = $overlay.find('#identify-modal-mode-select').val();
+    overlay.querySelector('#identify-btn').addEventListener('click', function () {
+      var pwmVal  = overlay.querySelector('#identify-modal-select').value;
+      var modeVal = overlay.querySelector('#identify-modal-mode-select').value;
       identifyFan(pwmVal, modeVal, this);
     });
 
     // Save label button
-    $overlay.find('#save-label-btn').on('click', function () {
+    overlay.querySelector('#save-label-btn').addEventListener('click', function () {
       savePWMLabel('identify-modal-select', 'identify-modal-label-input', 'identify-modal-label-tip');
     });
   }
