@@ -998,3 +998,4 @@ html.Theme--gray .fcp-sort-toggle::after {
 .fcp-help-list { margin: 6px 0 10px 16px; }
 .fcp-help-tip { margin-top: 8px; }
 .fcp-text-left { text-align: left; }
+.fcp-text-indent { text-indent: 0.3rem; }
