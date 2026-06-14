@@ -19,8 +19,8 @@ HTML;
     const titleDiv = document.querySelector('div.title > span.left');
     if (titleDiv) {
       titleDiv.innerHTML = `
-        <i class="icon-fanctrlplus" style="font-size:20px; vertical-align:middle;"></i>
-        <span style="margin-left:8px; vertical-align:middle;">FanCtrl Plus Configuration</span>`;
+        <i class="icon-fanctrlplus fcp-title-icon"></i>
+        <span class="fcp-title-text">FanCtrl Plus Configuration</span>`;
     }
   });
 </script>
@@ -1534,7 +1534,7 @@ $(function() {
        You can use the <strong>Identify PWM Controller</strong> section below at any time to perform this task later.
     </p>
 
-    <p style="color:red;">
+    <p class="fcp-text-danger">
       <strong>Note:</strong> Since v1.3.1, FanCtrl&nbsp;Plus supports CPU temperature monitoring.  
       However, it is <strong>not recommended</strong> to use FanCtrl&nbsp;Plus to control your CPU fan.  
       Please proceed at your own risk.
@@ -1565,22 +1565,22 @@ $(function() {
         The chart will show separate curves for <strong>Disk</strong> and <strong>CPU</strong> rules (if both are enabled) and highlight the current operating point in real time.
     </p>
 
-    <p style="margin: 10px 0 6px 0; font-weight: bold;">How it works:</p>
+    <p class="fcp-help-heading">How it works:</p>
 
     <div class="fc-help-box">
 
       <p>The fan controller always calculates a target speed from each enabled temperature source, then applies the <strong>highest</strong> value to ensure sufficient cooling.</p>
 
-      <ul style="margin: 6px 0 10px 16px;">
+      <ul class="fcp-help-list">
         <li><strong>Only Disk enabled:</strong> Uses the highest temperature among the selected disks.</li>
         <li><strong>Only CPU enabled:</strong> Uses the CPU temperature.</li>
         <li><strong>Disk + CPU enabled:</strong> Calculates fan speed from both rules and applies whichever result is higher.</li>
       </ul>
 
-      <p style="margin: 10px 0 6px 0; font-weight: bold;">Example:</p>
+      <p class="fcp-help-heading">Example:</p>
 
       <p><strong>Disk rule:</strong> Low Temp = 30°C → 40%, High Temp = 50°C → 100%</p>
-      <ul style="margin: 4px 0 8px 16px;">
+      <ul class="fcp-help-list">
         <li>30°C → 40%</li>
         <li>35°C → 55%</li>
         <li>40°C → 70%</li>
@@ -1589,7 +1589,7 @@ $(function() {
       </ul>
 
       <p><strong>CPU rule:</strong> Low Temp = 50°C → 40%, High Temp = 80°C → 100%</p>
-      <ul style="margin: 4px 0 8px 16px;">
+      <ul class="fcp-help-list">
         <li>50°C → 40%</li>
         <li>60°C → 55%</li>
         <li>70°C → 70%</li>
@@ -1597,13 +1597,13 @@ $(function() {
       </ul>
 
       <p><strong>Combined result:</strong> When both Disk and CPU control are enabled, the fan uses the <strong>higher</strong> calculated value.</p>
-      <ul style="margin: 4px 0 8px 16px;">
+      <ul class="fcp-help-list">
         <li>Disk 35°C → 55%, CPU 45°C → 40% → Result = <strong>55%</strong> (Disk)</li>
         <li>Disk 32°C → 46%, CPU 60°C → 55% → Result = <strong>55%</strong> (CPU)</li>
         <li>Disk 48°C → 94%, CPU 70°C → 70% → Result = <strong>94%</strong> (Disk)</li>
       </ul>
 
-      <p style="margin-top: 8px;"><em>Tip:</em> For CPU-based control, consider setting a <strong>shorter interval</strong> (e.g. 1&nbsp;minute) for better responsiveness.</p>
+      <p class="fcp-help-tip"><em>Tip:</em> For CPU-based control, consider setting a <strong>shorter interval</strong> (e.g. 1&nbsp;minute) for better responsiveness.</p>
     </div>
 
     <p><strong>Disks:</strong> Only the selected disks will be monitored to control this fan. Multiple fans can monitor overlapping disks, and one disk can be assigned to multiple fans.</p>
@@ -1618,7 +1618,7 @@ $(function() {
 
     <p><strong>Notes:</strong></p>
     <ul>
-    <li style="color:red;">
+    <li class="fcp-text-danger">
       <strong>CPU Fan Warning:</strong> CPU temperature can change rapidly (within seconds).  
       FanCtrl&nbsp;Plus checks temperatures at most once per minute, so it cannot react as fast as BIOS or hardware fan control.  
       It is strongly recommended to leave your CPU fan under BIOS/firmware control.  
@@ -1726,7 +1726,7 @@ $(function() {
 
           <dl class="fcp-formgrid">
             <dt class="fcp-formgrid-label"><strong>Dashboard FCP Airflow Tile:</strong></dt>
-            <dd style="text-align: left;">
+            <dd class="fcp-text-left">
               <span class="switch-area">
                 <div class="switch-button-background <?= $fcp_airflow_enabled ? ' checked' : '' ?>" data-for="fcp-airflow-switch">
                   <div class="switch-button-button"></div>
