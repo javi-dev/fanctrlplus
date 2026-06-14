@@ -56,6 +56,7 @@ while true; do
     else
       delta=$((cpu_temp - cpu_min_temp))
       range=$((cpu_max_temp - cpu_min_temp))
+      (( range == 0 )) && range=1
       cpu_pwm_val=$((pwm + delta * (max - pwm) / range))
     fi
   else
