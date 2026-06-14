@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 $plugin  = 'fanctrlplus';
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
@@ -38,14 +39,19 @@ function scan_dir($dir) {
   return $out;
 }
 
+// Validate PWM path — must match /sys/devices/.../pwm[0-9]
+function is_valid_pwm_path(string $path): bool {
+  return (bool)preg_match('#^/sys/devices/.+/pwm\d+$#', $path) && is_file($path);
+}
+
 $op = $_GET['op'] ?? $_POST['op'] ?? '';
 
 switch ($op) {
     
   case 'identify':
     $pwm  = $_GET['pwm']  ?? '';
-    $mode = $_GET['mode'] ?? 'pause';  // 默认 pause
-    if (is_file($pwm)) {
+    $mode = $_GET['mode'] ?? 'pause';
+    if (is_valid_pwm_path($pwm)) {
       $original_pwm  = trim(@file_get_contents($pwm));
       $pwm_enable    = $pwm . "_enable";
       $original_mode = is_file($pwm_enable) ? trim(@file_get_contents($pwm_enable)) : '2';
@@ -91,6 +97,12 @@ switch ($op) {
   case 'savelabel':
     $pwm = $_POST['pwm'] ?? '';
     $label = $_POST['label'] ?? '';
+
+    // Validate PWM path format (not file existence — just format)
+    if (!preg_match('#^/sys/devices/.+/pwm\d+$#', $pwm)) {
+      json_response(['status' => 'error', 'message' => 'Invalid PWM path']);
+      break;
+    }
 
     $label_file = "/boot/config/plugins/fanctrlplus/pwm_labels.cfg";
     // 读取现有label
