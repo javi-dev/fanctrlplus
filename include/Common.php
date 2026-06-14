@@ -76,7 +76,7 @@ function log_migrate(string $msg): void {
     @file_put_contents("/var/log/fanctrlplus-migrate.log",
         date("c")." ".$msg."\n", FILE_APPEND);
     // 再打一份到 syslog
-    @exec("logger -t fanctrlplus '$msg'");
+    @exec('logger -t fanctrlplus ' . escapeshellarg($msg));
 }
 
 function safe_rewrite(string $file, string $content): bool {
