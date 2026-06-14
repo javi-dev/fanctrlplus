@@ -127,6 +127,7 @@ foreach ($_POST['#file'] as $i => $file) {
   // 检查是否已有相同 custom 名称的 cfg
   foreach (glob("$cfgpath/{$plugin}_*.cfg") as $existing) {
     $info = parse_ini_file($existing);
+    if ($info === false) continue;
     if (isset($info['custom']) && trim($info['custom']) === $custom) {
       // 排除自身（重命名 temp → 正式名时允许自己）
       if (basename($existing) !== $old_file) {
@@ -156,7 +157,7 @@ foreach ($_POST['#file'] as $i => $file) {
       $old_path = $new_path;
   }
 
-  file_put_contents($old_path, "custom=\"$custom\"\n...");
+  file_put_contents($old_path, "custom=\"$custom\"\n...", LOCK_EX);
 
   // 校验 interval 合法性（必须为正整数）
   if (!ctype_digit($interval) || intval($interval) <= 0) {
