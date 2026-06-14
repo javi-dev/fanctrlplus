@@ -1054,3 +1054,25 @@ html.Theme--gray .fcp-sort-toggle::after {
 .fcp-modal-body {
   padding: 16px 24px 24px;
 }
+
+.fcp-modal-form {
+  margin: 12px 0;
+}
+
+.fcp-modal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fcp-modal-row label {
+  min-width: 160px;
+  text-align: right;
+}
+
+.fcp-modal-row select,
+.fcp-modal-row input[type="text"] {
+  flex: 1;
+  max-width: 220px;
+}
