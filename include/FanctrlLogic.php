@@ -44,8 +44,6 @@ function is_valid_pwm_path(string $path): bool {
   return (bool)preg_match('#^/sys/devices/.+/pwm\d+$#', $path) && is_file($path);
 }
 
-$op = $_GET['op'] ?? $_POST['op'] ?? '';
-
 switch ($op) {
     
   case 'identify':
@@ -120,7 +118,7 @@ switch ($op) {
       foreach ($lines as $line) {
         if (strpos($line, "$pwm=") !== 0) $new_lines[] = $line;
       }
-      file_put_contents($label_file, implode("\n", $new_lines) . "\n");
+      file_put_contents($label_file, implode("\n", $new_lines) . "\n", LOCK_EX);
       json_response(['status' => 'ok', 'message' => 'Label removed']);
       break;
     }
@@ -134,7 +132,7 @@ switch ($op) {
       }
     }
     if (!$found) $lines[] = "$pwm=$label";
-    file_put_contents($label_file, implode("\n", $lines) . "\n");
+    file_put_contents($label_file, implode("\n", $lines) . "\n", LOCK_EX);
     json_response(['status' => 'ok', 'message' => 'Label saved']);
     break;
   
@@ -165,6 +163,7 @@ switch ($op) {
     cpu_min_temp=""
     cpu_max_temp=""
     INI
+    , LOCK_EX
     );
 
     require_once "$docroot/plugins/$plugin/include/FanBlockRender.php";
@@ -185,6 +184,12 @@ switch ($op) {
       $cfg_file = basename($_POST['cfg']);
       $enabled = isset($_POST['enabled']) && $_POST['enabled'] == 1 ? 1 : 0;
 
+      // Validate filename is a plugin config file
+      if (!preg_match('/^fanctrlplus_\w+\.cfg$/', $cfg_file)) {
+          echo json_encode(['status' => 'error', 'msg' => 'Invalid config filename']);
+          exit;
+      }
+
       $cfg_dir = "/boot/config/plugins/fanctrlplus";
       $cfg_path = "$cfg_dir/$cfg_file";
 
@@ -200,7 +205,7 @@ switch ($op) {
           if (!$found) {
               $lines[] = 'syslog="' . $enabled . '"';
           }
-          file_put_contents($cfg_path, implode("\n", $lines) . "\n");
+          file_put_contents($cfg_path, implode("\n", $lines) . "\n", LOCK_EX);
           echo json_encode(['status' => 'ok']);
       } else {
           echo json_encode(['status' => 'error', 'msg' => 'Config file not found']);
@@ -210,6 +215,12 @@ switch ($op) {
   case 'delete':
     $file = basename($_POST['file'] ?? '');
     $cfgpath = "/boot/config/plugins/$plugin/$file";
+
+    // Validate filename is a plugin config file
+    if (!preg_match('/^fanctrlplus_\w+\.cfg$/', $file)) {
+      json_response(['status' => 'error', 'message' => 'Invalid filename']);
+      break;
+    }
 
     if (is_file($cfgpath)) {
       unlink($cfgpath);
@@ -240,6 +251,7 @@ switch ($op) {
 
     foreach (glob("$cfg_dir/{$plugin}_*.cfg") as $file) {
       $cfg = parse_ini_file($file);
+      if ($cfg === false) continue;
       $name = trim($cfg['custom'] ?? '');
       $enabled = trim($cfg['service'] ?? '0') === '1';
 
@@ -289,7 +301,7 @@ switch ($op) {
     }
 
     if ($output !== "") {
-      file_put_contents("$cfg_dir/order.cfg", $output);
+      file_put_contents("$cfg_dir/order.cfg", $output, LOCK_EX);
       json_response(['status' => 'ok']);
     } else {
       error_log("[fanctrlplus] ❌ Blocked invalid saveorder: " . print_r($order_raw, true));
@@ -361,7 +373,7 @@ switch ($op) {
       if (!$found) $lines[] = "__FCP_AIRFLOW__=" . ($enabled ? '1' : '0');
 
       @mkdir($cfg_dir, 0777, true);
-      file_put_contents($labels_file, implode("\n", $lines) . "\n");
+      file_put_contents($labels_file, implode("\n", $lines) . "\n", LOCK_EX);
 
       header('Content-Type: application/json; charset=utf-8');
       echo json_encode(['ok'=>1, 'enabled'=>$enabled ? 1 : 0]);
