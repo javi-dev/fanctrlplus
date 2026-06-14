@@ -30,6 +30,8 @@ fi
 plugin="fanctrlplus"
 custom="${custom:-$(basename "$cfg_file" .cfg)}"
 controller_enable="${controller}_enable"
+log_enable=$(grep '^syslog=' "$cfg_file" | cut -d'"' -f2)
+[[ -z "$log_enable" ]] && log_enable="1"
 
 # 推导 RPM 读取路径
 if [[ "$controller" =~ pwm([0-9]+)$ ]]; then
@@ -40,6 +42,9 @@ else
 fi
 
 prev_pwm=-1
+prev_temp=-1
+HYSTERESIS=2    # °C — ignore temp changes smaller than this
+MAX_RAMP=10     # PWM units — max change per cycle (gradual ramp)
 
 while true; do
   # === CPU 温度 ===
@@ -154,6 +159,28 @@ while true; do
   # 每轮都写入 Dashboard 缓存
   echo "${max_temp} ${temp_origin}" > "/var/tmp/fanctrlplus/temp_${plugin}_${custom}"
 
+  # === Hysteresis: skip PWM update if temp barely changed ===
+  if [[ "$max_temp" =~ ^[0-9]+$ && "$prev_temp" =~ ^[0-9]+$ ]]; then
+    temp_diff=$((max_temp - prev_temp))
+    (( temp_diff < 0 )) && temp_diff=$(( -temp_diff ))
+    if (( temp_diff < HYSTERESIS && prev_pwm != -1 )); then
+      # Temperature didn't change enough — keep current PWM
+      sleep $((interval * 60))
+      continue
+    fi
+  fi
+  prev_temp=$max_temp
+
+  # === PWM smoothing: ramp gradually toward target ===
+  if [[ "$prev_pwm" != -1 && "$pwm_val" =~ ^[0-9]+$ ]]; then
+    diff=$((pwm_val - prev_pwm))
+    if (( diff > MAX_RAMP )); then
+      pwm_val=$((prev_pwm + MAX_RAMP))
+    elif (( diff < -MAX_RAMP )); then
+      pwm_val=$((prev_pwm - MAX_RAMP))
+    fi
+  fi
+
   # === 若 PWM 有明显变化，或首次 ===
   if [[ "$prev_pwm" == -1 ]]; then
     [[ -f "$controller_enable" ]] && echo 1 > "$controller_enable"
@@ -181,7 +208,6 @@ while true; do
       fi
 
       label="[${custom}]"
-      log_enable=$(grep '^syslog=' "$cfg_file" | cut -d'"' -f2)
       if [[ -z "$log_enable" || "$log_enable" == "1" ]]; then
         logger -t fanctrlplus "$label Temp=${max_temp}°C $temp_origin → PWM=$pwm_val → RPM=$rpm"
       fi
